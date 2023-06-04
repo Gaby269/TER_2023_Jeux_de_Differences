@@ -5,7 +5,8 @@ CONNEXION :
 
 JOUER : 
 
-- A FAIRE : Ajouter la suppression des différences quand on joue
+- FAIT : Ajouter la suppression des différences quand on joue
+- FAIT : Recharger la page pour avoir le visuel
 
 
 CREER PARTIE : 

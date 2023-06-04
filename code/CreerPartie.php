@@ -180,7 +180,7 @@
         const word2 = document.getElementById('champTerme2');
         let messageErreur2 = document.getElementById('reseauMatchError2').style;
 
-        fetch("checkTermeReseau.php?word=" + word2.value)
+        fetch("./gestion_PHP/CHECK/checkTermeReseau.php?word=" + word2.value)
             .then(response => response.text())
             .then(data => {
                 if (data.includes('class="jdm-warning"')) {
@@ -188,6 +188,26 @@
                 } else {
                     messageErreur2.display = 'none';
                 }
+            })
+            .catch(error => console.error(error));
+    }
+
+    function supprimerDifference(idDifference) {
+        console.log("Vous avez appuyez : ", idDifference);
+        const button1 = document.getElementById(idDifference + "Button1");
+        const texte1 = document.getElementById(idDifference + "Texte1");
+        const button2 = document.getElementById(idDifference + "Button2");
+        const texte2 = document.getElementById(idDifference + "Texte2");
+        fetch("./gestion_PHP/DELETE/delete_differences.php?fichier=Creer&id=" + idDifference)
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                if (data == "delete") {
+                    button1.style.display = 'none';
+                    texte1.style.display = 'none';
+                    button2.style.display = 'none';
+                    texte2.style.display = 'none';
+                } else {}
             })
             .catch(error => console.error(error));
     }
@@ -502,10 +522,10 @@
                     ?>
                     <?php   foreach ($differences as $liste1) {
                                 if ($liste1['is_true_entite1']){
-                                    echo "<li><button type='button' class='delete-btn' style='vertical-align: middle;'>X</button><p><span style='color: green;'>".$liste1['type_diff'] ." // ".$liste1['valeur_diff']." </span></p></li>";
+                                    echo "<li><button id='".$liste1['id_difference']."Button1' type='button' class='delete-btn' style='vertical-align: middle;' onclick='supprimerDifference(".$liste1['id_difference'].")'>X</button><p id='".$liste1['id_difference']."Texte1'><span style='color: green;'>".$liste1['type_diff'] ." // ".$liste1['valeur_diff']." </span></p></li>";
                                 }
                                 else{
-                                    echo "<li><button type='button' class='delete-btn' style='vertical-align: middle;'>X</button><p><span style='color: red;'>".$liste1['type_diff'] ." // ".$liste1['valeur_diff']." </span></p></li>";
+                                    echo "<li><button id='".$liste1['id_difference']."Button1' type='button' class='delete-btn' style='vertical-align: middle;' onclick='supprimerDifference(".$liste1['id_difference'].")'>X</button><p id='".$liste1['id_difference']."Texte1'><span style='color: red;'>".$liste1['type_diff'] ." // ".$liste1['valeur_diff']." </span></p></li>";
                                 }
                             }
                     ?>
@@ -519,12 +539,12 @@
             <br>
             <div class="form-group" style="flex: 1;">
                 <ul>
-                    <?php   foreach ($differences as $liste1) {
-                                if (!$liste1['is_true_entite1']){
-                                    echo "<li><button type='button' class='delete-btn' style='vertical-align: middle;'>X</button><p><span style='color: green;'>".$liste1['type_diff'] ." // " . $liste1['valeur_diff'] . " </span></p></li>";
+                    <?php   foreach ($differences as $liste2) {
+                                if (!$liste2['is_true_entite1']){
+                                    echo "<li><button id='".$liste2['id_difference']."Button2' type='button' class='delete-btn' style='vertical-align: middle;' onclick='supprimerDifference(".$liste2['id_difference'].")'>X</button><p id='".$liste2['id_difference']."Texte2'><span style='color: green;'>".$liste2['type_diff'] ." // ".$liste2['valeur_diff']." </span></p></li>";
                                 }
                                 else{
-                                    echo "<li><button type='button' class='delete-btn' style='vertical-align: middle;'>X</button><p><span style='color: red;'>".$liste1['type_diff'] ." // " . $liste1['valeur_diff'] . " </span></p></li>";
+                                    echo "<li><button id='".$liste2['id_difference']."Button2' type='button' class='delete-btn' style='vertical-align: middle;' onclick='supprimerDifference(".$liste2['id_difference'].")'>X</button><p id='".$liste2['id_difference']."Texte2'><span style='color: red;'>".$liste2['type_diff'] ." // ".$liste2['valeur_diff']." </span></p></li>";
                                 }
                             }
                     ?>

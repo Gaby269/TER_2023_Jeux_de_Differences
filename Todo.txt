@@ -11,4 +11,4 @@ JOUER :
 
 CREER PARTIE : 
 
-- A FAIRE : Ajouter la suppression des différences quand on cree une partie
+- FAIT : Ajouter la suppression des différences quand on cree une partie

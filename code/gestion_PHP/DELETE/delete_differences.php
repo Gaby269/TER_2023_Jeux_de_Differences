@@ -3,7 +3,6 @@
 if (isset($_GET['id'])) {
 
     $idDiff = $_GET['id'];
-    echo $idDiff;
     
     //$dsn="mysql:host=localhost;dbname=ter_2023_differences";
     $dsn = "mysql:host=localhost;dbname=id20747577_ter_2023_differences";

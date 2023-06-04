@@ -1,0 +1,13 @@
+CONNEXION :
+
+- FAIT : Ajouter le fait de ne pas pouvoir aller plus loin si le message de mauvaismot de passe est activé
+
+
+JOUER : 
+
+- A FAIRE : Ajouter la suppression des différences quand on joue
+
+
+CREER PARTIE : 
+
+- A FAIRE : Ajouter la suppression des différences quand on cree une partie

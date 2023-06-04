@@ -12,3 +12,13 @@ JOUER :
 CREER PARTIE : 
 
 - FAIT : Ajouter la suppression des différences quand on cree une partie
+
+
+MES PARTIES :
+
+- A FAIRE : ajouter visuel des parties
+
+
+CLASSEMENT : 
+
+- A FAIRE : Ajout des classement par parties jouées ou crées

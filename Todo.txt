@@ -16,7 +16,8 @@ CREER PARTIE :
 
 MES PARTIES :
 
-- A FAIRE : ajouter visuel des parties
+- FAIT : ajouter visuel des parties
+- A FAIRE : Ajouter la possiblité de modifier ses différences
 
 
 CLASSEMENT : 

@@ -26,13 +26,13 @@
         $utilisateur = $sth->fetch(PDO::FETCH_ASSOC);
         $_SESSION['utilisateur'] = $utilisateur;
     }
-    var_dump(isset($_SESSION['utilisateur']));
-    var_dump($_SESSION['utilisateur']);
+    //var_dump(isset($_SESSION['utilisateur']));
+    //var_dump($_SESSION['utilisateur']);
         
     
     //var_dump(isset($_SESSION['utilisateur']));
     $isLoggedIn = isset($_SESSION['utilisateur']);
-    var_dump($isLoggedIn);
+    //var_dump($isLoggedIn);
     
 ?>
 
@@ -64,6 +64,13 @@
     <title> Menu </title>
 
     <style>
+    /* Media query pour les écrans de taille inférieure à 600 pixels */
+    @media screen and (max-width: 600px) {
+        .partie {
+            /* Styles pour les écrans étroits (téléphones) */
+        }
+    }
+
     nav {
         background-color: #a80000;
         overflow: hidden;

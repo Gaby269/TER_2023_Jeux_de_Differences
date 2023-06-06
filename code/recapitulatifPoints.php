@@ -9,11 +9,11 @@
     $options=array(PDO::MYSQL_ATTR_INIT_COMMAND=> 'SET NAMES utf8');
     $dbh=new PDO($dsn, $username, $password, $options) or die("Pb de connexion !");
         
-    var_dump($_SESSION['utilisateur']);
+    //var_dump($_SESSION['utilisateur']);
     $isLoggedIn = isset($_SESSION['utilisateur']);
-    var_dump("Connecté : ", $isLoggedIn);
+    //var_dump("Connecté : ", $isLoggedIn);
     $isPartieBegin = isset($_SESSION['partieCouranteJoue']);
-    var_dump("Partie commencé : ", $isPartieBegin);
+    //var_dump("Partie commencé : ", $isPartieBegin);
 ?>
 
 <!DOCTYPE html>

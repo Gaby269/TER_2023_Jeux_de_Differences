@@ -10,10 +10,10 @@
     $options=array(PDO::MYSQL_ATTR_INIT_COMMAND=> 'SET NAMES utf8');
     $dbh=new PDO($dsn, $username, $password, $options) or die("Pb de connexion !");
     
-    var_dump($_SESSION['utilisateur']);
+    //var_dump($_SESSION['utilisateur']);
     $isLoggedIn = isset($_SESSION['utilisateur']);
     $idUser = $isLoggedIn ? (int)$_SESSION['utilisateur']['id_utilisateur'] : null;
-    var_dump($isLoggedIn);
+    //var_dump($isLoggedIn);
 ?>
 
 
@@ -148,6 +148,51 @@
     li button:hover {
         background-color: #ff6961;
     }
+
+
+    .container {
+        width: 100%;
+        margin-top: 10px;
+        padding: 0px;
+    }
+
+    .tab {
+        overflow: hidden;
+        border-bottom: 1px solid #ccc;
+        background-color: #f66900;
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        /* Ajout de l'espacement entre les onglets */
+    }
+
+    .tab button {
+        background-color: inherit;
+        flex: 1;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: background-color 0.3s;
+        border-radius: 0px;
+    }
+
+    .tab button:hover {
+        background-color: #a80000;
+        border-radius: 0px;
+    }
+
+    .tab button.active {
+        background-color: #a80000;
+        border-radius: 0px;
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 20px;
+        border-top: 1px solid #ccc;
+        width: 100%;
+    }
     </style>
 
 </head>
@@ -184,6 +229,19 @@
             </ul>
         </nav>
     </header>
+
+    <div class="container">
+        <!-- Barre d'onglets des parties à afficher -->
+        <div class="tab">
+            <button class="tablink active" onclick="openTab(event, 'general')"><strong>CLASSEMENT
+                    GENERAL</strong></button>
+            <button class="tablink" onclick="openTab(event, 'partie_creer')"><strong>CLASSEMENT DE MES
+                    PARTIES</strong></button>
+            <button class="tablink" onclick="openTab(event, 'partie_jouer')"><strong>CLASSEMENT DES PARTIES
+                    JOU&EacuteES</strong></button>
+        </div>
+    </div>
+
 
     <header class="row">
         <h1 class="col-sm-12 text-center align-self-center">
@@ -237,6 +295,11 @@
 
     <br><br>
 
+    <script>
+    // Par défaut, afficher le premier onglet au chargement de la page (partie1)
+    document.getElementById("partie1").style.display = "block";
+    document.getElementById("partie1").className = "tabcontent parties_creer";
+    </script>
 
 
 </body>

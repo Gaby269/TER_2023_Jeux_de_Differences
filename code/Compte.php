@@ -10,10 +10,10 @@
     $options=array(PDO::MYSQL_ATTR_INIT_COMMAND=> 'SET NAMES utf8');
     $dbh=new PDO($dsn, $username, $password, $options) or die("Pb de connexion !");
         
-    var_dump($_SESSION['utilisateur']);
+    //var_dump($_SESSION['utilisateur']);
     $id_user = $_SESSION['utilisateur']['id_utilisateur'];
     $isLoggedIn = isset($_SESSION['utilisateur']);
-    var_dump($isLoggedIn, $id_user);
+    //var_dump($isLoggedIn, $id_user);
     
 ?>
 

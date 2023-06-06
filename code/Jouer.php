@@ -11,11 +11,11 @@
     $dbh=new PDO($dsn, $username, $password, $options) or die("Pb de connexion !");
         
 
-    var_dump($_SESSION['utilisateur']);
+    //var_dump($_SESSION['utilisateur']);
     $isLoggedIn = isset($_SESSION['utilisateur']);
-    var_dump("Connecté : ", $isLoggedIn);
+    //var_dump("Connecté : ", $isLoggedIn);
     $isPartieBegin = isset($_SESSION['partieCouranteJoue']);
-    var_dump("Partie commencé : ", $isPartieBegin);
+    //var_dump("Partie commencé : ", $isPartieBegin);
     
 ?>
 
@@ -187,7 +187,7 @@
         const texte1 = document.getElementById(idDifference + "Texte1");
         const button2 = document.getElementById(idDifference + "Button2");
         const texte2 = document.getElementById(idDifference + "Texte2");
-        fetch("./gestion_PHP/DELETE/delete_differences.php?id=" + idDifference)
+        fetch("./gestion_PHP/DELETE/delete_differences.php?fichier=Jouer&id=" + idDifference)
             .then(response => response.text())
             .then(data => {
                 console.log(data);

@@ -10,17 +10,17 @@
     $options=array(PDO::MYSQL_ATTR_INIT_COMMAND=> 'SET NAMES utf8');
     $dbh=new PDO($dsn, $username, $password, $options) or die("Pb de connexion !");
         
-    var_dump($_SESSION['utilisateur']);
+    //var_dump($_SESSION['utilisateur']);
     
     //var_dump(isset($_SESSION['utilisateur']));
     $isLoggedIn = isset($_SESSION['utilisateur']);
-    var_dump($isLoggedIn);
+    //var_dump($isLoggedIn);
     
     if (isset($_GET['partieFini'])){
         unset($_SESSION['partieCouranteCree']);
     }
     
-    var_dump($_SESSION['partieCouranteCree']);
+    //var_dump($_SESSION['partieCouranteCree']);
 ?>
 
 

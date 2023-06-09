@@ -150,6 +150,66 @@
     }
 
 
+    .partie-header {
+        position: relative;
+    }
+
+    .partie-header .icon-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 5px;
+    }
+
+    .partie-header .icon-container svg {
+        width: 35px;
+        height: 35px;
+        fill: black;
+        /* Couleur de remplissage de l'icône */
+    }
+
+
+    .partie-classement {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    .collapsed {
+        max-height: 0;
+    }
+
+
+
+    .partie {
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .partie-header {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .partie-body {
+        margin-left: 20px;
+    }
+
+    .partie-classement {
+        margin-top: 20px;
+        margin-bottom: 5px;
+        margin-left: 30px;
+    }
+
+    .partie-entite {
+        margin-bottom: 5px;
+    }
+
+
     .container {
         width: 100%;
         margin-top: 10px;
@@ -194,6 +254,51 @@
         width: 100%;
     }
     </style>
+
+
+    <script>
+    function AffichageDetails(element) {
+        // Sur les différences
+        var partie = element.closest('.partie');
+        var partieClassement = partie.querySelector('.partie-classement');
+        partieClassement.classList.toggle("collapsed");
+        if (partieClassement.classList.contains("collapsed")) {
+            partieClassement.style.maxHeight = null;
+        } else {
+            partieClassement.style.maxHeight = partieClassement.scrollHeight + "px";
+        }
+
+        // Sur le header
+        var partieHeader = element.querySelector('.partie-header');
+        var iconOuverture = partieHeader.querySelector('#icon-ouverture');
+        // Vérifier la classe active de la partie-header
+        var isActive = partieHeader.classList.contains("active");
+        // Changer le contenu de la balise SVG en fonction de la classe active
+        if (isActive) {
+            iconOuverture.innerHTML =
+                "<path d='M0 0h24v24H0z' fill='none'/><path d='M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z'/>";
+        } else {
+            iconOuverture.innerHTML =
+                "<path d='M0 0h24v24H0z' fill='none'/><path d='M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z'/>";
+        }
+        partieHeader.classList.toggle("active");
+    }
+
+    // Fonction pour afficher le contenu de l'onglet sélectionné et masquer les autres
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    </script>
 
 </head>
 
@@ -258,47 +363,382 @@
 
 
 
+
+
     <?php
-    // Récupération des données de classement
+    
+
+    // Récupération des données de classement général
     $query = "SELECT id_utilisateur, nom, prenom, score_utilisateur FROM utilisateur ORDER BY score_utilisateur DESC";
     $stmt = $dbh->prepare($query);
     $stmt->execute();
-    $classement = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $classement_general = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //var_dump($classement_general);
 
-    //var_dump($classement);
-
-    // Affichage des données de classement dans un tableau
-    echo '<table style="margin: auto;">';
-        echo "<tr>
-            <th>Position</th>
-            <th>Nom</th>
-            <th>Prenom</th>
-            <th>Score</th>
-        </tr>";
-        $position = 1;
-        foreach ($classement as $joueur) {
-            $style = "";
-            if ($joueur['id_utilisateur'] == $idUser) {
-                $style = "background-color: orange;";
-            }
-            echo "<tr style='{$style}'>
-                <td>{$position}</td>
-                <td>{$joueur['nom']}</td>
-                <td>{$joueur['prenom']}</td>
-                <td>{$joueur['score_utilisateur']}</td>
+    // Affichage des données de classement dans un tableau pour le classement général
+    echo '<div id="general" class="tabcontent general">';
+        echo '<table style="margin: auto;">';
+            echo "<tr>
+                <th>Position</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Score</th>
             </tr>";
-            $position++;
-        }
+            $position = 1;
+            foreach ($classement_general as $joueur) {
+                $style = "";
+                if ($joueur['id_utilisateur'] == $idUser) {
+                    $style = "background-color: orange;";
+                }
+                echo "<tr style='{$style}'>
+                    <td>{$position}</td>
+                    <td>{$joueur['nom']}</td>
+                    <td>{$joueur['prenom']}</td>
+                    <td>{$joueur['score_utilisateur']}</td>
+                </tr>";
+                $position++;
+            }
         echo "</table>";
+    echo "</div>";
+    
+    
+    // Classement pour mes parties
+    $sqlPartie = "SELECT * FROM parties WHERE idUtilisateur = :id";
+    $sthPartie = $dbh-> prepare($sqlPartie);
+    $sthPartie->bindParam(':id', $idUser);
+    $sthPartie -> execute();
+    $parties = $sthPartie->fetchAll(PDO::FETCH_ASSOC);
+    /*foreach ($parties as $p){
+        var_dump($p['id_parties'], "<br><br>");
+    }*/
+    
+    $classements_creer = array();
+    
+    // Recherche du classment
+    foreach ($parties as $p){
+        // Récupération des données de classement des parties créées
+        $query = "SELECT * FROM partie_jouer, utilisateur WHERE idUtilisateur = id_utilisateur AND idPartie = :idP ORDER BY score DESC;";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(':idP', $p['id_parties']);
+        $stmt->execute();
+        $classement_creer = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($classement_creer) != 0){
+            $classements_creer[] = $classement_creer;
+        }
+        else{
+            $classements_creer[] = array();
+        }
+        
+    }
+    /*foreach ($classements_creer as $c){
+        var_dump($c, "<br><br>");
+    }*/
+    
+    
+    // Recherche des entités pour chaque parties
+    $sqlEntite = "SELECT id_entite, nom_entite FROM entites, parties WHERE idUtilisateur = :id AND (idEntite1 = id_entite OR idEntite2 = id_entite)";
+    $sthEntite = $dbh-> prepare($sqlEntite);
+    $sthEntite->bindParam(':id', $idUser);
+    $sthEntite -> execute();
+    $entites = $sthEntite->fetchAll(PDO::FETCH_ASSOC);
+    //var_dump($entites);
+    
+    /*// Selection des différences (par joueurs)
+    $sqlDiff = "SELECT idPartie, id_difference, type_diff, valeur_diff, is_true_entite1 FROM differences, difference_partie WHERE idUtilisateur = :idUser AND id_difference = idDifference;";
+    $sthDiff = $dbh->prepare($sqlDiff);
+    $sthDiff->bindParam(':idUser', $idUser);
+    $sthDiff->execute();
+    $differences = $sthDiff->fetchAll(PDO::FETCH_ASSOC);
+    /*foreach ($differences as $i => $difference) {
+        var_dump($difference, "<br>");
+    }*/
+    
+    
+    if (count($parties) === 0){
+        echo "<p> Vous n'avez pas encore de parties à vous </p>";
+    }
+    
+    // Mettre les entités par deux
+    $entite_parDeux = array();
+    // Vérifier s'il y a un nombre pair d'éléments dans le tableau
+    if (count($entites) % 2 === 0) {
+        // Parcourir les indices du tableau avec un pas de 2
+        for ($i = 0; $i < count($entites); $i += 2) {
+            $entite1 = $entites[$i];
+            $entite2 = $entites[$i + 1];
+            
+            // Créer une paire d'entités et l'ajouter dans le nouveau tableau
+            $paire = array($entite1, $entite2);
+            $entite_parDeux[] = $paire;
+        }
+    } else {
+        echo "Le tableau doit avoir un nombre pair d'éléments pour grouper les entités deux par deux.";
+    }
+    
+    /*// Mettre les différences par deux
+    $differences_parDeux = array();
+    // Vérifier s'il y a un nombre pair d'éléments dans le tableau
+    if (count($differences) % 2 === 0) {
+        // Parcourir les indices du tableau avec un pas de 2
+        for ($i = 0; $i < count($differences); $i += 2) {
+            $difference1 = $differences[$i];
+            $difference2 = $differences[$i + 1];
+            
+            // Créer une paire de différence et l'ajouter dans le nouveau tableau
+            $paire = array($difference1, $difference2);
+            $differences_parDeux[] = $paire;
+        }
+    } else {
+        echo "Le tableau doit avoir un nombre pair d'éléments pour grouper les entités deux par deux.";
+    }
+    //var_dump($differences_parDeux);*/
+    
+?>
 
-    ?>
+    <div id="partie_creer" class="tabcontent partie_creer">
+        <?php 
+        foreach ($parties as $i => $partie) {
+            
+            $k = 0;
+            echo "<div class='partie' onclick='AffichageDetails(this)'>";
+                echo "<div class='partie-header'>Partie n°". ($i + 1);
+                    echo "<span class='icon-container'>";
+                        echo "<svg id='icon-ouverture' xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='#000000'>
+                                <path d='M0 0h24v24H0z' fill='none'/><path d='M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z'/>
+                            </svg>";
+                    echo "</span>";
+                echo "</div>";
+                echo "<div class='partie-body'>";
+                 
+                    foreach ($entite_parDeux as $e) {
+                        if ($e[0]['id_entite'] == $partie['idEntite1']){
+                            echo "<div class='partie-entite'>";
+                                echo "<strong>Entit&eacute n°1 : </strong>".$e[0]['nom_entite'];
+                                echo "<br>";
+                                echo "<strong>Entit&eacute n°2 : </strong>".$e[1]['nom_entite'];
+                            echo "</div>";
+                            
+                            // Affichage des données de classement dans un tableau
+                            echo '<div class="partie-classement collapsed">';
+                                echo '<table style="margin: auto;">';
+                                    echo "<tr>
+                                        <th>Position</th>
+                                        <th>Nom</th>
+                                        <th>Prenom</th>
+                                        <th>Score</th>
+                                    </tr>";
+                                    $position = 1;
+                                    // Si le classement est vide
+                                    //var_dump("<br><br>", $classements_creer[$i]);
+                                    if ($classements_creer[$i][0]['idPartie'] != $partie['id_parties']){
+                                        echo "<p style='color:red;'>Personne n'a jouer encore à cette partie</p>";
+                                    }
+                                    else{
+                                        // Parcours des joueurs de chaque partie
+                                        foreach ($classements_creer[$i] as $c){
+                                            //var_dump($classements_creer[$i], "<br>", $c['idPartie'], "<br>", $partie['id_parties']);
+                                        
+                                            $style = "";
+                                            echo "<tr style='{$style}'>
+                                                <td>{$position}</td>
+                                                <td>{$c['nom']}</td>
+                                                <td>{$c['prenom']}</td>
+                                                <td>{$c['score']}</td>
+                                            </tr>";
+                                            $position++;
+                                            
+                                        }
+                                    
+                                    }
+                                echo "</table>";
+                            echo "</div>";
+                        }
+                    }
+                echo "</div>";
+            echo "</div>";
+        } ?>
+    </div>
+
+
+
+
+
+    <?php
+    // Recherche des parties joué pour chercher les utilisateurs
+    $sqlPartie = "SELECT id_parties, pj.idUtilisateur AS idUse_Joueur, p.idUtilisateur AS idUse_Createur, score, pourcentage, nb_fois_jouer, idEntite1, idEntite2 FROM partie_jouer AS pj, parties AS p WHERE idPartie = id_parties AND pj.idUtilisateur = :id; ";
+    $sthPartie = $dbh-> prepare($sqlPartie);
+    $sthPartie->bindParam(':id', $idUser);
+    $sthPartie -> execute();
+    $parties = $sthPartie->fetchAll(PDO::FETCH_ASSOC);
+    //var_dump($parties);
+    
+    // Recherche des joueurs qui ont aussi joué à la partie
+    
+    
+    $classements_jouer = array();
+    
+    // Recherche du classment
+    foreach ($parties as $p){
+        // Récupération des données de classement des parties jouées
+        $query = "SELECT * FROM partie_jouer, utilisateur WHERE idUtilisateur = id_utilisateur AND idPartie = :idP ORDER BY score DESC;";
+        $stmt = $dbh->prepare($query);
+        $stmt->bindParam(':idP', $p['id_parties']);
+        $stmt->execute();
+        $classement_jouer = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($classement_jouer) != 0){
+            $classements_jouer[] = $classement_jouer;
+        }
+        else{
+            $classements_jouer[] = array();
+        }
+        
+    }
+    /*foreach ($classements_jouer as $c){
+        var_dump($c, "<br><br>");
+    }*/
+    
+    // Entites et mettre en pair
+    $entite_parDeux = array();
+    $createurs = array();
+    for ($i = 0; $i < count($parties); $i += 1){
+        //var_dump($parties[$i]['idEntite1'], $parties[$i]['idEntite2'], "<br>");
+        $sqlEntite = "SELECT id_entite, nom_entite FROM entites WHERE id_entite = :idE1 OR id_entite = :idE2;";
+        //var_dump($sqlEntite, "<br>");
+        $sthEntite = $dbh-> prepare($sqlEntite);
+        $sthEntite->bindParam(':idE1', $parties[$i]['idEntite1']);
+        $sthEntite->bindParam(':idE2', $parties[$i]['idEntite2']);
+        $sthEntite -> execute();
+        $entites = $sthEntite->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($entites, "<br>");
+    
+        $entite1 = $entites[0];
+        $entite2 = $entites[1];
+        
+        // Créer une paire d'entités et l'ajouter dans le nouveau tableau
+        $paire = array($entite1, $entite2);
+        $entite_parDeux[] = $paire;
+        
+        
+        // Selection de l'utilisateur creant la partie
+        $sqlUse = "SELECT id_utilisateur, nom, prenom FROM utilisateur WHERE id_utilisateur = :idUser;";
+        $sthUse = $dbh->prepare($sqlUse);
+        $sthUse->bindParam(':idUser', $parties[$i]['idUse_Createur']);
+        $sthUse->execute();
+        $use = $sthUse->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($use);
+        $createurs[] = $use[0]["nom"]." ".$use[0]["prenom"];
+    }
+    //var_dump($entite_parDeux);
+    //var_dump($createurs);
+    
+    /*// Selection des différences
+    $sqlDiff = "SELECT idUtilisateur, idPartie, id_difference, type_diff, valeur_diff, is_true_entite1 FROM differences, difference_partie WHERE idUtilisateur = :idUser AND id_difference = idDifference;";
+    $sthDiff = $dbh->prepare($sqlDiff);
+    $sthDiff->bindParam(':idUser', $idUser);
+    $sthDiff->execute();
+    $differences = $sthDiff->fetchAll(PDO::FETCH_ASSOC);
+    /*foreach ($differences as $i => $difference) {
+        var_dump($difference, "<br>");
+    }*/
+    
+    
+    /*// Mettre les différences par deux
+    $differences_parDeux = array();
+    // Vérifier s'il y a un nombre pair d'éléments dans le tableau
+    if (count($differences) % 2 === 0) {
+        // Parcourir les indices du tableau avec un pas de 2
+        for ($i = 0; $i < count($differences); $i += 2) {
+            $difference1 = $differences[$i];
+            $difference2 = $differences[$i + 1];
+            
+            // Créer une paire de différence et l'ajouter dans le nouveau tableau
+            $paire = array($difference1, $difference2);
+            $differences_parDeux[] = $paire;
+        }
+    } else {
+        echo "Le tableau doit avoir un nombre pair d'éléments pour grouper les entités deux par deux.";
+    }
+    //var_dump($differences_parDeux);*/
+    
+    
+    
+    
+?>
+
+
+    <div id="partie_jouer" class="tabcontent partie_jouer">
+        <?php 
+        foreach ($parties as $i => $partie) {
+            
+            $k = 0;
+            echo "<div class='partie' onclick='AffichageDetails(this)'>";
+                echo "<div class='partie-header'>Partie n°". ($i + 1);
+                    echo "<span class='icon-container'>";
+                        echo "<svg id='icon-ouverture' xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='#000000'>
+                                <path d='M0 0h24v24H0z' fill='none'/><path d='M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z'/>
+                            </svg>";
+                    echo "</span>";
+                echo "</div>";
+                echo "<div class='partie-body'>";
+                 
+                    foreach ($entite_parDeux as $e) {
+                        if ($e[0]['id_entite'] == $partie['idEntite1']){
+                            echo "<div class='partie-entite'>";
+                                echo "<strong>Entit&eacute n°1 : </strong>".$e[0]['nom_entite'];
+                                echo "<br>";
+                                echo "<strong>Entit&eacute n°2 : </strong>".$e[1]['nom_entite'];
+                            echo "</div>";
+                            
+                            // Affichage des données de classement dans un tableau
+                            echo '<div class="partie-classement collapsed">';
+                                echo '<table style="margin: auto;">';
+                                    echo "<tr>
+                                        <th>Position</th>
+                                        <th>Nom</th>
+                                        <th>Prenom</th>
+                                        <th>Score</th>
+                                    </tr>";
+                                    $position = 1;
+                                    // Si le classement est vide
+                                    //var_dump("<br><br>", $classements_jouer[$i]);
+                                    if ($classements_jouer[$i][0]['idPartie'] != $partie['id_parties']){
+                                        echo "<p style='color:red;'>Personne n'a jouer encore à cette partie</p>";
+                                    }
+                                    else{
+                                        // Parcours des joueurs de chaque partie
+                                        foreach ($classements_jouer[$i] as $c){
+                                            //var_dump($classements_jouer[$i], "<br>", $c['idPartie'], "<br>", $partie['id_parties']);
+                                        
+                                            $style = "";
+                                            if ($c['id_utilisateur'] == $idUser) {
+                                                $style = "background-color: orange;";
+                                            }
+                                            echo "<tr style='{$style}'>
+                                                <td>{$position}</td>
+                                                <td>{$c['nom']}</td>
+                                                <td>{$c['prenom']}</td>
+                                                <td>{$c['score']}</td>
+                                            </tr>";
+                                            $position++;
+                                            
+                                        }
+                                    
+                                    }
+                                echo "</table>";
+                            echo "</div>";
+                        }
+                    }
+                echo "</div>";
+            echo "</div>";
+        } ?>
+    </div>
 
     <br><br>
 
     <script>
     // Par défaut, afficher le premier onglet au chargement de la page (partie1)
-    document.getElementById("partie1").style.display = "block";
-    document.getElementById("partie1").className = "tabcontent parties_creer";
+    document.getElementById("general").style.display = "block";
+    document.getElementById("general").className = "tabcontent general";
     </script>
 
 

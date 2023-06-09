@@ -249,12 +249,12 @@
         $scoreActuel = $partie['score'];
         //var_dump($partie);
         if ($partie === false){
-            var_dump("La partie n'a pas été trouvé");
+            //var_dump("La partie n'a pas été trouvé");
             // Partie jouer par l'utilisateur
             $sqlPartie = "INSERT INTO partie_jouer (idPartie, idUtilisateur, score, pourcentage, nb_fois_jouer) VALUES (:idP, :idU, :point, :pourcentage, 1);";
             $sthPartie = $dbh -> prepare($sqlPartie);
-            $sthPartie->bindParam(':idU', $_SESSION['utilisateur']['id_utilisateur']);
             $sthPartie->bindParam(':idP', $_SESSION['partieCouranteJoue']['idPartie']);
+            $sthPartie->bindParam(':idU', $_SESSION['utilisateur']['id_utilisateur']);
             $sthPartie->bindParam(':point', $point);
             $sthPartie->bindParam(':pourcentage', $pourcentage);
             $sthPartie -> execute();

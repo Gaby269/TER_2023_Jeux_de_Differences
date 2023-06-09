@@ -22,4 +22,5 @@ MES PARTIES :
 
 CLASSEMENT : 
 
-- A FAIRE : Ajout des classement par parties jouées ou crées
+- FAIT : Ajout des classement par parties jouées ou crées
+- A FAIRE : Ajouter la possiblité de voir les différences remplis par chacun
